@@ -24,26 +24,7 @@ app.get('/reservas', async (req, res) => {
 app.post('/reservas', async (req, res) => {
   const { fecha, hora_inicio, nombre, cedula, conjunto, torre, apartamento } = req.body;
 
-  // Validación 1: Verificar que el apartamento existe
-  const { data: residente, error: errorResidente } = await supabase
-    .from('residentes')
-    .select('*')
-    .eq('cedula', cedula)
-    .eq('conjunto', conjunto)
-    .eq('torre', torre)
-    .eq('apartamento', apartamento)
-    .single();
-
-  if (errorResidente || !residente) {
-    return res.status(403).json({ error: 'Los datos no coinciden con ningún residente registrado' });
-  }
-
-  // Validación 2: Verificar que la cédula coincide con el nombre
-  if (residente.nombre.toLowerCase() !== nombre.toLowerCase()) {
-    return res.status(403).json({ error: 'El nombre no coincide con la cédula registrada' });
-  }
-
-  // Validación 3: Verificar que no ha reservado ese mismo día
+  // Validar que no haya reservado ese mismo día
   const { data: reservaExistente } = await supabase
     .from('reservas')
     .select('*')
@@ -55,7 +36,6 @@ app.post('/reservas', async (req, res) => {
     return res.status(409).json({ error: 'Ya tienes una reserva para ese día' });
   }
 
-  // Crear la reserva
   const { error } = await supabase
     .from('reservas')
     .insert([{ fecha, hora_inicio, nombre, cedula, conjunto, torre, apartamento }]);
