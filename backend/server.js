@@ -11,30 +11,22 @@ const supabase = createClient(
   process.env.SUPABASE_KEY
 );
 
-// 🔹 GET reservas
 app.get('/reservas', async (req, res) => {
   const { fecha } = req.query;
-
   const { data, error } = await supabase
     .from('reservas')
     .select('*')
     .eq('fecha', fecha);
-
   if (error) return res.status(500).json({ error });
-
   res.json(data);
 });
 
-// 🔹 POST reserva
 app.post('/reservas', async (req, res) => {
-  const { fecha, hora_inicio, nombre, apartamento } = req.body;
-
+  const { fecha, hora_inicio, nombre, cedula, conjunto, torre, apartamento } = req.body;
   const { error } = await supabase
     .from('reservas')
-    .insert([{ fecha, hora_inicio, nombre, apartamento }]);
-
+    .insert([{ fecha, hora_inicio, nombre, cedula, conjunto, torre, apartamento }]);
   if (error) return res.status(500).json({ error });
-
   res.json({ mensaje: 'Reserva creada ✅' });
 });
 
