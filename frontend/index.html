@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cancha Vibratto Sotavento</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0a2e1a 0%, #1a5c32 50%, #0a2e1a 100%);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 30px 15px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 580px;
+    }
+
+    /* HEADER */
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .header .logo {
+      font-size: 52px;
+      margin-bottom: 8px;
+    }
+
+    .header h1 {
+      color: #ffffff;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .header p {
+      color: #a8d5b5;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #f0b429;
+      color: #0a2e1a;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 12px;
+      border-radius: 20px;
+      margin-top: 8px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* CARD */
+    .card {
+      background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+
+    .card-title {
+      color: #a8d5b5;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+
+    /* FECHA */
+    input[type="date"] {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      color: white;
+      font-size: 15px;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    input[type="date"]:focus {
+      border-color: #4ade80;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
+    }
+
+    /* HORAS */
+    .horas-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .hora-btn {
+      padding: 12px 10px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .libre {
+      background: rgba(74, 222, 128, 0.15);
+      color: #4ade80;
+      border-color: rgba(74, 222, 128, 0.3);
+    }
+
+    .libre:hover {
+      background: rgba(74, 222, 128, 0.3);
+      border-color: #4ade80;
+    }
+
+    .ocupada {
+      background: rgba(239, 68, 68, 0.1);
+      color: rgba(239, 68, 68, 0.6);
+      border-color: rgba(239, 68, 68, 0.2);
+      cursor: not-allowed;
+      text-decoration: line-through;
+    }
+
+    .seleccionada {
+      background: #4ade80 !important;
+      color: #0a2e1a !important;
+      border-color: #4ade80 !important;
+    }
+
+    .placeholder-horas {
+      color: rgba(255,255,255,0.4);
+      font-size: 13px;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    /* FORMULARIO */
+    .input-group {
+      margin-bottom: 14px;
+    }
+
+    .input-group label {
+      display: block;
+      color: #a8d5b5;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      color: white;
+      font-size: 14px;
+      font-family: 'Poppins', sans-serif;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .input-group input::placeholder { color: rgba(255,255,255,0.35); }
+    .input-group input:focus { border-color: #4ade80; }
+
+    /* HORA SELECCIONADA */
+    .hora-resumen {
+      background: rgba(74, 222, 128, 0.15);
+      border: 1px solid rgba(74, 222, 128, 0.4);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #4ade80;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    /* BOTÓN */
+    .btn-reservar {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+      color: #0a2e1a;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-reservar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(74, 222, 128, 0.4);
+    }
+
+    /* MENSAJE */
+    .mensaje {
+      padding: 14px;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 14px;
+      display: none;
+      margin-top: 12px;
+    }
+
+    .exito { background: rgba(74,222,128,0.2); color: #4ade80; border: 1px solid rgba(74,222,128,0.4); }
+    .error { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.4); }
+
+    /* LEYENDA */
+    .leyenda {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 4px;
+    }
+
+    .leyenda span {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-libre { background: #4ade80; }
+    .dot-ocupada { background: #ef4444; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">⚽</div>
+    <h1>Cancha Vibratto</h1>
+    <p>Conjunto Sotavento · Reservas de 1 hora</p>
+    <span class="badge">Disponible hasta las 9:00 PM</span>
+  </div>
+
+  <!-- FECHA -->
+  <div class="card">
+    <div class="card-title">📅 Selecciona la fecha</div>
+    <input type="date" id="fecha">
+  </div>
+
+  <!-- HORAS -->
+  <div class="card">
+    <div class="card-title">🕐 Horas disponibles</div>
+    <div class="horas-grid" id="horas-grid">
+      <p class="placeholder-horas" style="grid-column: span 2;">Selecciona una fecha para ver disponibilidad</p>
+    </div>
+    <div class="leyenda" style="margin-top:14px;">
+      <span><div class="dot dot-libre"></div> Disponible</span>
+      <span><div class="dot dot-ocupada"></div> Ocupada</span>
+    </div>
+  </div>
+
+  <!-- FORMULARIO -->
+  <div class="card" id="formulario" style="display:none;">
+    <div class="card-title">✍️ Tus datos</div>
+    <div class="hora-resumen" id="hora-resumen"></div>
+
+    <div class="input-group">
+      <label>Tu nombre completo</label>
+      <input type="text" id="nombre" placeholder="Ej: Juan Pérez">
+    </div>
+
+    <div class="input-group">
+      <label>Número de apartamento</label>
+      <input type="text" id="apartamento" placeholder="Ej: 301">
+    </div>
+
+    <button class="btn-reservar" onclick="hacerReserva()">Confirmar Reserva</button>
+    <div class="mensaje" id="mensaje"></div>
+  </div>
+
+</div>
+
+<script>
+  const HORAS = [
+    { valor: '08:00', etiqueta: '8:00 AM - 9:00 AM' },
+    { valor: '09:00', etiqueta: '9:00 AM - 10:00 AM' },
+    { valor: '10:00', etiqueta: '10:00 AM - 11:00 AM' },
+    { valor: '11:00', etiqueta: '11:00 AM - 12:00 PM' },
+    { valor: '12:00', etiqueta: '12:00 PM - 1:00 PM' },
+    { valor: '13:00', etiqueta: '1:00 PM - 2:00 PM' },
+    { valor: '14:00', etiqueta: '2:00 PM - 3:00 PM' },
+    { valor: '15:00', etiqueta: '3:00 PM - 4:00 PM' },
+    { valor: '16:00', etiqueta: '4:00 PM - 5:00 PM' },
+    { valor: '17:00', etiqueta: '5:00 PM - 6:00 PM' },
+    { valor: '18:00', etiqueta: '6:00 PM - 7:00 PM' },
+    { valor: '19:00', etiqueta: '7:00 PM - 8:00 PM' },
+    { valor: '20:00', etiqueta: '8:00 PM - 9:00 PM' },
+  ];
+
+  let horaSeleccionada = null;
+  let etiquetaSeleccionada = null;
+
+  document.getElementById('fecha').addEventListener('change', cargarHoras);
+
+  async function cargarHoras() {
+    const fecha = document.getElementById('fecha').value;
+    if (!fecha) return;
+
+    horaSeleccionada = null;
+    etiquetaSeleccionada = null;
+    document.getElementById('formulario').style.display = 'none';
+
+    const res = await fetch(`http://localhost:3000/reservas?fecha=${fecha}`);
+    const reservas = await res.json();
+    const horasOcupadas = reservas.map(r => r.hora_inicio.slice(0, 5));
+
+    const grid = document.getElementById('horas-grid');
+    grid.innerHTML = '';
+
+    HORAS.forEach(hora => {
+      const btn = document.createElement('button');
+      const ocupada = horasOcupadas.includes(hora.valor);
+      btn.className = 'hora-btn ' + (ocupada ? 'ocupada' : 'libre');
+      btn.textContent = hora.etiqueta;
+      if (!ocupada) {
+        btn.onclick = () => seleccionarHora(hora.valor, hora.etiqueta, btn);
+      }
+      grid.appendChild(btn);
+    });
+  }
+
+  function seleccionarHora(valor, etiqueta, btn) {
+    document.querySelectorAll('.hora-btn').forEach(b => {
+      if (b.classList.contains('libre')) b.classList.remove('seleccionada');
+    });
+    btn.classList.add('seleccionada');
+    horaSeleccionada = valor;
+    etiquetaSeleccionada = etiqueta;
+    document.getElementById('hora-resumen').textContent = '⏰ ' + etiqueta;
+    document.getElementById('formulario').style.display = 'block';
+    document.getElementById('formulario').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  async function hacerReserva() {
+    const fecha = document.getElementById('fecha').value;
+    const nombre = document.getElementById('nombre').value.trim();
+    const apartamento = document.getElementById('apartamento').value.trim();
+
+    if (!horaSeleccionada || !nombre || !apartamento) {
+      mostrarMensaje('Por favor completa todos los campos', 'error');
+      return;
+    }
+
+    const res = await fetch('http://localhost:3000/reservas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fecha, hora_inicio: horaSeleccionada + ':00', nombre, apartamento })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      mostrarMensaje('✅ Reserva confirmada para las ' + etiquetaSeleccionada, 'exito');
+      document.getElementById('nombre').value = '';
+      document.getElementById('apartamento').value = '';
+      cargarHoras();
+    } else {
+      mostrarMensaje('❌ ' + data.error, 'error');
+    }
+  }
+
+  function mostrarMensaje(texto, tipo) {
+    const m = document.getElementById('mensaje');
+    m.textContent = texto;
+    m.className = 'mensaje ' + tipo;
+    m.style.display = 'block';
+    setTimeout(() => m.style.display = 'none', 4000);
+  }
+</script>
+</body>
+</html>
