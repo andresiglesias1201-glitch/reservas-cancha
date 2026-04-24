@@ -334,7 +334,7 @@
     etiquetaSeleccionada = null;
     document.getElementById('formulario').style.display = 'none';
 
-    const res = await fetch(`http://localhost:3000/reservas?fecha=${fecha}`);
+    const res = await fetch(`https://reservas-cancha-1-1ky2.onrender.com/reservas?fecha=${fecha}`);
     const reservas = await res.json();
     const horasOcupadas = reservas.map(r => r.hora_inicio.slice(0, 5));
 
@@ -375,7 +375,7 @@
       return;
     }
 
-    const res = await fetch('http://localhost:3000/reservas', {
+    const res = await fetch('https://reservas-cancha-1-1ky2.onrender.com/reservas', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fecha, hora_inicio: horaSeleccionada + ':00', nombre, apartamento })
