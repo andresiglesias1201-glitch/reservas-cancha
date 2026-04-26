@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro - Cancha Vibratto</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0a2e1a 0%, #1a5c32 50%, #0a2e1a 100%);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 30px 15px;
+    }
+    .container { width: 100%; max-width: 580px; }
+    .header { text-align: center; margin-bottom: 24px; }
+    .header .logo { font-size: 52px; margin-bottom: 8px; }
+    .header h1 { color: #ffffff; font-size: 26px; font-weight: 700; }
+    .header p { color: #a8d5b5; font-size: 13px; margin-top: 4px; }
+    .card {
+      background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+    .card-title { color: #a8d5b5; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; }
+    .input-group { margin-bottom: 14px; }
+    .input-group label { display: block; color: #a8d5b5; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+    .input-group input, .input-group select {
+      width: 100%; padding: 14px 16px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px; color: white; font-size: 14px;
+      font-family: 'Poppins', sans-serif; outline: none; transition: border 0.2s;
+    }
+    .input-group select option { background: #1a5c32; color: white; }
+    .input-group input::placeholder { color: rgba(255,255,255,0.35); }
+    .input-group input:focus, .input-group select:focus { border-color: #4ade80; }
+    .dos-columnas { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .btn {
+      width: 100%; padding: 16px;
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+      color: #0a2e1a; border: none; border-radius: 12px;
+      font-size: 16px; font-weight: 700; font-family: 'Poppins', sans-serif;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(74,222,128,0.4); }
+    .mensaje { padding: 14px; border-radius: 12px; text-align: center; font-weight: 600; font-size: 14px; display: none; margin-top: 12px; }
+    .exito { background: rgba(74,222,128,0.2); color: #4ade80; border: 1px solid rgba(74,222,128,0.4); }
+    .error { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.4); }
+    .link { text-align: center; margin-top: 16px; }
+    .link a { color: #4ade80; font-size: 13px; text-decoration: none; }
+    .link a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo">⚽</div>
+    <h1>Registro de Residente</h1>
+    <p>Conjunto Sotavento · Regístrate para reservar</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">👤 Tus datos</div>
+
+    <div class="input-group">
+      <label>Nombre completo</label>
+      <input type="text" id="nombre" placeholder="Ej: Juan Pérez">
+    </div>
+
+    <div class="input-group">
+      <label>Número de cédula</label>
+      <input type="text" id="cedula" placeholder="Ej: 1234567890">
+    </div>
+
+    <div class="input-group">
+      <label>Conjunto residencial</label>
+      <select id="conjunto">
+        <option value="">Selecciona el conjunto</option>
+        <option value="Arena">Arena</option>
+        <option value="Vibratto">Vibratto</option>
+      </select>
+    </div>
+
+    <div class="dos-columnas">
+      <div class="input-group">
+        <label>Torre</label>
+        <input type="text" id="torre" placeholder="Ej: 5">
+      </div>
+      <div class="input-group">
+        <label>Apartamento</label>
+        <input type="text" id="apartamento" placeholder="Ej: 301">
+      </div>
+    </div>
+
+    <button class="btn" onclick="registrar()">Registrarme</button>
+    <div class="mensaje" id="mensaje"></div>
+  </div>
+
+  <div class="link">
+    <a href="index.html">← Ya estoy registrado, quiero reservar</a>
+  </div>
+</div>
+
+<script>
+  const API = 'https://reservas-cancha-1-1ky2.onrender.com';
+
+  async function registrar() {
+    const nombre = document.getElementById('nombre').value.trim();
+    const cedula = document.getElementById('cedula').value.trim();
+    const conjunto = document.getElementById('conjunto').value;
+    const torre = document.getElementById('torre').value.trim();
+    const apartamento = document.getElementById('apartamento').value.trim();
+
+    if (!nombre || !cedula || !conjunto || !torre || !apartamento) {
+      mostrarMensaje('Por favor completa todos los campos', 'error');
+      return;
+    }
+
+    const res = await fetch(`${API}/residentes`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre, cedula, conjunto, torre, apartamento })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      mostrarMensaje('✅ Registro exitoso! Ya puedes reservar la cancha', 'exito');
+      setTimeout(() => window.location.href = 'index.html', 2000);
+    } else {
+      mostrarMensaje('❌ ' + data.error, 'error');
+    }
+  }
+
+  function mostrarMensaje(texto, tipo) {
+    const m = document.getElementById('mensaje');
+    m.textContent = texto;
+    m.className = 'mensaje ' + tipo;
+    m.style.display = 'block';
+  }
+</script>
+</body>
+</html>
