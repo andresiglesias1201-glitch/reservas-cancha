@@ -133,6 +133,7 @@
     const data = await res.json();
 
     if (res.ok) {
+        localStorage.setItem('residente', JSON.stringify({ nombre, cedula, conjunto, torre, apartamento }));
       mostrarMensaje('✅ Registro exitoso! Ya puedes reservar la cancha', 'exito');
       setTimeout(() => window.location.href = 'index.html', 2000);
     } else {

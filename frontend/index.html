@@ -212,10 +212,19 @@
     { valor: '19:00', etiqueta: '7:00 PM - 8:00 PM' },
     { valor: '20:00', etiqueta: '8:00 PM - 9:00 PM' },
   ];
+let horaSeleccionada = null;
+let etiquetaSeleccionada = null;
 
-  let horaSeleccionada = null;
-  let etiquetaSeleccionada = null;
-
+// Cargar datos del residente si ya está registrado
+const residente = JSON.parse(localStorage.getItem('residente'));
+if (residente) {
+  document.getElementById('nombre').value = residente.nombre;
+  document.getElementById('cedula').value = residente.cedula;
+  document.getElementById('conjunto').value = residente.conjunto;
+  document.getElementById('torre').value = residente.torre;
+  document.getElementById('apartamento').value = residente.apartamento;
+}
+ 
   document.getElementById('fecha').addEventListener('change', cargarHoras);
 
   async function cargarHoras() {
