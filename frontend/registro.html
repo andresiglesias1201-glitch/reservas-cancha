@@ -30,6 +30,14 @@
       margin-bottom: 16px;
     }
     .card-title { color: #a8d5b5; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; }
+    .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 24px; }
+    .tab {
+      padding: 12px; border-radius: 12px; text-align: center;
+      font-size: 13px; font-weight: 600; font-family: 'Poppins', sans-serif;
+      cursor: pointer; border: 2px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.5); background: transparent; transition: all 0.2s;
+    }
+    .tab.activo { background: #4ade80; color: #0a2e1a; border-color: #4ade80; }
     .input-group { margin-bottom: 14px; }
     .input-group label { display: block; color: #a8d5b5; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
     .input-group input, .input-group select {
@@ -54,58 +62,108 @@
     .mensaje { padding: 14px; border-radius: 12px; text-align: center; font-weight: 600; font-size: 14px; display: none; margin-top: 12px; }
     .exito { background: rgba(74,222,128,0.2); color: #4ade80; border: 1px solid rgba(74,222,128,0.4); }
     .error { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.4); }
-    .link { text-align: center; margin-top: 16px; }
-    .link a { color: #4ade80; font-size: 13px; text-decoration: none; }
-    .link a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
 <div class="container">
   <div class="header">
     <div class="logo">⚽</div>
-    <h1>Registro de Residente</h1>
-    <p>Conjunto Sotavento · Regístrate para reservar</p>
+    <h1>Cancha Vibratto</h1>
+    <p>Conjunto Sotavento · Reservas de 1 hora</p>
   </div>
 
   <div class="card">
-    <div class="card-title">👤 Tus datos</div>
-
-    <div class="input-group">
-      <label>Nombre completo</label>
-      <input type="text" id="nombre" placeholder="Ej: Juan Pérez">
+    <div class="tabs">
+      <button class="tab activo" onclick="mostrarTab('login')">Ya estoy registrado</button>
+      <button class="tab" onclick="mostrarTab('registro')">Registrarme</button>
     </div>
 
-    <div class="input-group">
-      <label>Número de cédula</label>
-      <input type="text" id="cedula" placeholder="Ej: 1234567890">
-    </div>
-
-    <div class="input-group">
-      <label>Conjunto residencial</label>
-      <select id="conjunto">
-        <option value="">Selecciona el conjunto</option>
-        <option value="Arena">Arena</option>
-        <option value="Vibratto">Vibratto</option>
-      </select>
-    </div>
-
-    <div class="dos-columnas">
+    <!-- LOGIN -->
+    <div id="tab-login">
+      <div class="card-title">🔑 Iniciar sesión</div>
       <div class="input-group">
-        <label>Torre</label>
-        <input type="text" id="torre" placeholder="Ej: 5">
+        <label>Nombre completo</label>
+        <input type="text" id="login-nombre" placeholder="Ej: Juan Pérez">
       </div>
       <div class="input-group">
-        <label>Apartamento</label>
-        <input type="text" id="apartamento" placeholder="Ej: 301">
+        <label>Número de cédula</label>
+        <input type="text" id="login-cedula" placeholder="Ej: 1234567890">
       </div>
+      <button class="btn" onclick="iniciarSesion()">Entrar a reservar</button>
+      <div class="mensaje" id="mensaje-login"></div>
     </div>
 
-    <button class="btn" onclick="registrar()">Registrarme</button>
-    <div class="mensaje" id="mensaje"></div>
+    <!-- REGISTRO -->
+    <div id="tab-registro" style="display:none;">
+      <div class="card-title">👤 Nuevo registro</div>
+      <div class="input-group">
+        <label>Nombre completo</label>
+        <input type="text" id="nombre" placeholder="Ej: Juan Pérez">
+      </div>
+      <div class="input-group">
+        <label>Número de cédula</label>
+        <input type="text" id="cedula" placeholder="Ej: 1234567890">
+      </div>
+      <div class="input-group">
+        <label>Conjunto residencial</label>
+        <select id="conjunto">
+          <option value="">Selecciona el conjunto</option>
+          <option value="Arena">Arena</option>
+          <option value="Vibratto">Vibratto</option>
+        </select>
+      </div>
+      <div class="dos-columnas">
+        <div class="input-group">
+          <label>Torre</label>
+          <input type="text" id="torre" placeholder="Ej: 5">
+        </div>
+        <div class="input-group">
+          <label>Apartamento</label>
+          <input type="text" id="apartamento" placeholder="Ej: 301">
+        </div>
+      </div>
+      <button class="btn" onclick="registrar()">Registrarme</button>
+      <div class="mensaje" id="mensaje-registro"></div>
+    </div>
   </div>
+</div>
 
 <script>
   const API = 'https://reservas-cancha-1-1ky2.onrender.com';
+
+  function mostrarTab(tab) {
+    document.getElementById('tab-login').style.display = tab === 'login' ? 'block' : 'none';
+    document.getElementById('tab-registro').style.display = tab === 'registro' ? 'block' : 'none';
+    document.querySelectorAll('.tab').forEach((t, i) => {
+      t.classList.toggle('activo', (tab === 'login' && i === 0) || (tab === 'registro' && i === 1));
+    });
+  }
+
+  async function iniciarSesion() {
+    const nombre = document.getElementById('login-nombre').value.trim();
+    const cedula = document.getElementById('login-cedula').value.trim();
+
+    if (!nombre || !cedula) {
+      mostrarMensaje('mensaje-login', 'Por favor completa todos los campos', 'error');
+      return;
+    }
+
+    const res = await fetch(`${API}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre, cedula })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      localStorage.setItem('residente', JSON.stringify(data.residente));
+      mostrarMensaje('mensaje-login', '✅ Bienvenido ' + data.residente.nombre, 'exito');
+      setTimeout(() => window.location.href = 'index.html', 1500);
+    } else {
+      mostrarMensaje('mensaje-login', '❌ ' + data.error, 'error');
+    }
+  }
 
   async function registrar() {
     const nombre = document.getElementById('nombre').value.trim();
@@ -115,7 +173,7 @@
     const apartamento = document.getElementById('apartamento').value.trim();
 
     if (!nombre || !cedula || !conjunto || !torre || !apartamento) {
-      mostrarMensaje('Por favor completa todos los campos', 'error');
+      mostrarMensaje('mensaje-registro', 'Por favor completa todos los campos', 'error');
       return;
     }
 
@@ -128,16 +186,16 @@
     const data = await res.json();
 
     if (res.ok) {
-        localStorage.setItem('residente', JSON.stringify({ nombre, cedula, conjunto, torre, apartamento }));
-      mostrarMensaje('✅ Registro exitoso! Ya puedes reservar la cancha', 'exito');
-      setTimeout(() => window.location.href = 'index.html', 2000);
+      localStorage.setItem('residente', JSON.stringify({ nombre, cedula, conjunto, torre, apartamento }));
+      mostrarMensaje('mensaje-registro', '✅ Registro exitoso! Redirigiendo...', 'exito');
+      setTimeout(() => window.location.href = 'index.html', 1500);
     } else {
-      mostrarMensaje('❌ ' + data.error, 'error');
+      mostrarMensaje('mensaje-registro', '❌ ' + data.error, 'error');
     }
   }
 
-  function mostrarMensaje(texto, tipo) {
-    const m = document.getElementById('mensaje');
+  function mostrarMensaje(id, texto, tipo) {
+    const m = document.getElementById(id);
     m.textContent = texto;
     m.className = 'mensaje ' + tipo;
     m.style.display = 'block';

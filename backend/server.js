@@ -66,6 +66,25 @@ app.post('/residentes', async (req, res) => {
 
   res.json({ mensaje: 'Registro exitoso ✅' });
 });
+app.post('/login', async (req, res) => {
+  const { nombre, cedula } = req.body;
+
+  const { data: residente, error } = await supabase
+    .from('residentes')
+    .select('*')
+    .eq('cedula', cedula)
+    .single();
+
+  if (error || !residente) {
+    return res.status(404).json({ error: 'No estás registrado. Por favor regístrate primero' });
+  }
+
+  if (residente.nombre.toLowerCase() !== nombre.toLowerCase()) {
+    return res.status(403).json({ error: 'El nombre no coincide con la cédula' });
+  }
+
+  res.json({ residente });
+});
 const PORT = process.env.PORT || 3000;
 
 app.get("/", (req, res) => {
