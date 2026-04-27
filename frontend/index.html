@@ -290,16 +290,12 @@ if (residente) {
 
     if (res.ok) {
       mostrarMensaje('✅ Reserva confirmada para las ' + etiquetaSeleccionada, 'exito');
-      document.getElementById('nombre').value = '';
-      document.getElementById('cedula').value = '';
-      document.getElementById('conjunto').value = '';
-      document.getElementById('torre').value = '';
-      document.getElementById('apartamento').value = '';
-      cargarHoras();
+      localStorage.removeItem('residente');
+      setTimeout(() => window.location.href = 'registro.html', 2000);
     } else {
       mostrarMensaje('❌ ' + data.error, 'error');
     }
-  }
+  
 
   function mostrarMensaje(texto, tipo) {
     const m = document.getElementById('mensaje');
@@ -307,6 +303,7 @@ if (residente) {
     m.className = 'mensaje ' + tipo;
     m.style.display = 'block';
     setTimeout(() => m.style.display = 'none', 4000);
+     }
   }
 </script>
 </body>
