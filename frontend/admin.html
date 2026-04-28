@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Cancha Vibratto</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0a2e1a 0%, #1a5c32 50%, #0a2e1a 100%);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 30px 15px;
+    }
+    .container { width: 100%; max-width: 680px; }
+    .header { text-align: center; margin-bottom: 24px; }
+    .header .logo { font-size: 52px; margin-bottom: 8px; }
+    .header h1 { color: #ffffff; font-size: 26px; font-weight: 700; }
+    .header p { color: #a8d5b5; font-size: 13px; margin-top: 4px; }
+    .card {
+      background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+    .card-title { color: #a8d5b5; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; }
+    .input-group { margin-bottom: 14px; }
+    .input-group label { display: block; color: #a8d5b5; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+    .input-group input {
+      width: 100%; padding: 14px 16px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px; color: white; font-size: 14px;
+      font-family: 'Poppins', sans-serif; outline: none; transition: border 0.2s;
+    }
+    .input-group input::placeholder { color: rgba(255,255,255,0.35); }
+    .input-group input:focus { border-color: #4ade80; }
+    .btn {
+      width: 100%; padding: 16px;
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+      color: #0a2e1a; border: none; border-radius: 12px;
+      font-size: 16px; font-weight: 700; font-family: 'Poppins', sans-serif;
+      cursor: pointer; transition: all 0.2s; margin-bottom: 12px;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(74,222,128,0.4); }
+    .btn-excel {
+      width: 100%; padding: 14px;
+      background: rgba(255,255,255,0.1);
+      color: white; border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px; font-size: 14px; font-weight: 600;
+      font-family: 'Poppins', sans-serif; cursor: pointer;
+      transition: all 0.2s; margin-bottom: 10px;
+    }
+    .btn-excel:hover { background: rgba(255,255,255,0.2); }
+    .mensaje { padding: 14px; border-radius: 12px; text-align: center; font-weight: 600; font-size: 14px; display: none; margin-top: 12px; }
+    .exito { background: rgba(74,222,128,0.2); color: #4ade80; border: 1px solid rgba(74,222,128,0.4); }
+    .error { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.4); }
+    .stats {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 12px; margin-bottom: 16px;
+    }
+    .stat {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px; padding: 16px; text-align: center;
+    }
+    .stat-numero { color: #4ade80; font-size: 32px; font-weight: 700; }
+    .stat-label { color: #a8d5b5; font-size: 12px; margin-top: 4px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo">⚙️</div>
+    <h1>Panel de Administración</h1>
+    <p>Club House Sotavento</p>
+  </div>
+
+  <!-- LOGIN ADMIN -->
+  <div class="card" id="login-card">
+    <div class="card-title">🔐 Acceso administrador</div>
+    <div class="input-group">
+      <label>Contraseña</label>
+      <input type="password" id="password" placeholder="Ingresa la contraseña">
+    </div>
+    <button class="btn" onclick="verificarPassword()">Entrar</button>
+    <div class="mensaje" id="mensaje-login"></div>
+  </div>
+
+  <!-- PANEL ADMIN -->
+  <div id="panel-admin" style="display:none;">
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-numero" id="total-reservas">-</div>
+        <div class="stat-label">Reservas totales</div>
+      </div>
+      <div class="stat">
+        <div class="stat-numero" id="total-residentes">-</div>
+        <div class="stat-label">Residentes registrados</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📊 Exportar datos</div>
+      <button class="btn-excel" onclick="exportarReservas()">📥 Exportar Reservas a Excel</button>
+      <button class="btn-excel" onclick="exportarResidentes()">📥 Exportar Residentes a Excel</button>
+      <button class="btn-excel" onclick="exportarTodo()">📥 Exportar Todo (un archivo)</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🗑️ Limpiar datos</div>
+      <button class="btn-excel" onclick="borrarReservas()" style="color:#f87171; border-color:rgba(239,68,68,0.3);">🗑️ Borrar todas las reservas</button>
+      <div class="mensaje" id="mensaje-admin"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const API = 'https://reservas-cancha-1-1ky2.onrender.com';
+  const PASSWORD = 'Junior1924@';
+
+  function verificarPassword() {
+    const pass = document.getElementById('password').value;
+    if (pass === PASSWORD) {
+      document.getElementById('login-card').style.display = 'none';
+      document.getElementById('panel-admin').style.display = 'block';
+      cargarEstadisticas();
+    } else {
+      const m = document.getElementById('mensaje-login');
+      m.textContent = '❌ Contraseña incorrecta';
+      m.className = 'mensaje error';
+      m.style.display = 'block';
+    }
+  }
+
+  async function cargarEstadisticas() {
+    const resReservas = await fetch(`${API}/admin/reservas`);
+    const reservas = await resReservas.json();
+    document.getElementById('total-reservas').textContent = reservas.length;
+
+    const resResidentes = await fetch(`${API}/admin/residentes`);
+    const residentes = await resResidentes.json();
+    document.getElementById('total-residentes').textContent = residentes.length;
+  }
+
+  async function exportarReservas() {
+    const res = await fetch(`${API}/admin/reservas`);
+    const data = await res.json();
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Reservas');
+    XLSX.writeFile(wb, 'reservas.xlsx');
+  }
+
+  async function exportarResidentes() {
+    const res = await fetch(`${API}/admin/residentes`);
+    const data = await res.json();
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Residentes');
+    XLSX.writeFile(wb, 'residentes.xlsx');
+  }
+
+  async function exportarTodo() {
+    const resR = await fetch(`${API}/admin/reservas`);
+    const reservas = await resR.json();
+    const resRe = await fetch(`${API}/admin/residentes`);
+    const residentes = await resRe.json();
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(reservas), 'Reservas');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(residentes), 'Residentes');
+    XLSX.writeFile(wb, 'clubhouse-sotavento.xlsx');
+  }
+
+  async function borrarReservas() {
+    if (!confirm('¿Estás seguro de borrar TODAS las reservas?')) return;
+    const res = await fetch(`${API}/admin/reservas`, { method: 'DELETE' });
+    const data = await res.json();
+    const m = document.getElementById('mensaje-admin');
+    m.textContent = res.ok ? '✅ Reservas borradas exitosamente' : '❌ Error al borrar';
+    m.className = 'mensaje ' + (res.ok ? 'exito' : 'error');
+    m.style.display = 'block';
+    if (res.ok) cargarEstadisticas();
+  }
+</script>
+</body>
+</html>

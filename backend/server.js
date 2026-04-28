@@ -85,6 +85,32 @@ app.post('/login', async (req, res) => {
 
   res.json({ residente });
 });
+app.get('/admin/reservas', async (req, res) => {
+  const { data, error } = await supabase
+    .from('reservas')
+    .select('*')
+    .order('fecha', { ascending: false });
+  if (error) return res.status(500).json({ error });
+  res.json(data);
+});
+
+app.get('/admin/residentes', async (req, res) => {
+  const { data, error } = await supabase
+    .from('residentes')
+    .select('*')
+    .order('nombre', { ascending: true });
+  if (error) return res.status(500).json({ error });
+  res.json(data);
+});
+
+app.delete('/admin/reservas', async (req, res) => {
+  const { error } = await supabase
+    .from('reservas')
+    .delete()
+    .neq('id', 0);
+  if (error) return res.status(500).json({ error });
+  res.json({ mensaje: 'Reservas borradas ✅' });
+});
 const PORT = process.env.PORT || 3000;
 
 app.get("/", (req, res) => {
