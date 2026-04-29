@@ -44,43 +44,20 @@ app.post('/reservas', async (req, res) => {
 
   res.json({ mensaje: 'Reserva creada ✅' });
 });
-app.post('/residentes', async (req, res) => {
-  const { nombre, cedula, conjunto, torre, apartamento } = req.body;
-
-  // Verificar si la cédula ya está registrada
-  const { data: existente } = await supabase
-    .from('residentes')
-    .select('*')
-    .eq('cedula', cedula)
-    .single();
-
-  if (existente) {
-    return res.status(409).json({ error: 'Esta cédula ya está registrada' });
-  }
-
-  const { error } = await supabase
-    .from('residentes')
-    .insert([{ nombre, cedula, conjunto, torre, apartamento }]);
-
-  if (error) return res.status(500).json({ error });
-
-  res.json({ mensaje: 'Registro exitoso ✅' });
-});
 app.post('/login', async (req, res) => {
-  const { nombre, cedula } = req.body;
+  const { cedula, conjunto, torre, apartamento } = req.body;
 
   const { data: residente, error } = await supabase
     .from('residentes')
     .select('*')
     .eq('cedula', cedula)
+    .eq('conjunto', conjunto)
+    .eq('torre', torre)
+    .eq('apartamento', apartamento)
     .single();
 
   if (error || !residente) {
-    return res.status(404).json({ error: 'No estás registrado. Por favor regístrate primero' });
-  }
-
-  if (residente.nombre.toLowerCase() !== nombre.toLowerCase()) {
-    return res.status(403).json({ error: 'El nombre no coincide con la cédula' });
+    return res.status(404).json({ error: 'Datos incorrectos, verifica tu información' });
   }
 
   res.json({ residente });

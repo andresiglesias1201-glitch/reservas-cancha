@@ -79,18 +79,33 @@
     </div>
 
     <!-- LOGIN -->
-    <div id="tab-login">
-      <div class="card-title">🔑 Iniciar sesión</div>
-      <div class="input-group">
-        <label>Nombre completo</label>
-        <input type="text" id="login-nombre" placeholder="Ej: Juan Pérez">
-      </div>
-      <div class="input-group">
-        <label>Número de cédula</label>
-        <input type="text" id="login-cedula" placeholder="Ej: 1234567890">
-      </div>
-      <button class="btn" onclick="iniciarSesion()">Entrar a reservar</button>
-      <div class="mensaje" id="mensaje-login"></div>
+<div id="tab-login">
+  <div class="card-title">🔑 Iniciar sesión</div>
+  <div class="input-group">
+    <label>Número de cédula</label>
+    <input type="text" id="login-cedula" placeholder="Ej: 1234567890">
+  </div>
+  <div class="input-group">
+    <label>Conjunto residencial</label>
+    <select id="login-conjunto">
+      <option value="">Selecciona el conjunto</option>
+      <option value="Arena">Arena</option>
+      <option value="Vibratto">Vibratto</option>
+    </select>
+  </div>
+  <div class="dos-columnas">
+    <div class="input-group">
+      <label>Torre</label>
+      <input type="text" id="login-torre" placeholder="Ej: 5">
+    </div>
+    <div class="input-group">
+      <label>Apartamento</label>
+      <input type="text" id="login-apartamento" placeholder="Ej: 301">
+    </div>
+  </div>
+  <button class="btn" onclick="iniciarSesion()">Entrar a reservar</button>
+  <div class="mensaje" id="mensaje-login"></div>
+</div>
     </div>
 
     <!-- REGISTRO -->
@@ -140,10 +155,12 @@
   }
 
   async function iniciarSesion() {
-    const nombre = document.getElementById('login-nombre').value.trim();
     const cedula = document.getElementById('login-cedula').value.trim();
+    const conjunto = document.getElementById('login-conjunto').value;
+    const torre = document.getElementById('login-torre').value.trim();
+    const apartamento = document.getElementById('login-apartamento').value.trim();
 
-    if (!nombre || !cedula) {
+    if (!cedula || !conjunto || !torre || !apartamento) {
       mostrarMensaje('mensaje-login', 'Por favor completa todos los campos', 'error');
       return;
     }
@@ -151,7 +168,7 @@
     const res = await fetch(`${API}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, cedula })
+      body: JSON.stringify({ cedula, conjunto, torre, apartamento })
     });
 
     const data = await res.json();
@@ -164,7 +181,7 @@
       mostrarMensaje('mensaje-login', '❌ ' + data.error, 'error');
     }
   }
-
+  
   async function registrar() {
     const nombre = document.getElementById('nombre').value.trim();
     const cedula = document.getElementById('cedula').value.trim();
